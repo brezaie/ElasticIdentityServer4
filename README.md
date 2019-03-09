@@ -7,4 +7,4 @@ In some cases, software teams need to make an integration between Elastic and Id
 ## IdentityServer4 preparation
 In order to make it easier to add news clients, scopes, etc., the [IdentityServer4 admin panel](https://github.com/skoruba/IdentityServer4.Admin) is recomended. When running the project, you need to define a new client, with the id of `elastic-mvc` and the name of `ElasticSearch`, for instance. 
 
-![Alt text](01 - Client creation.PNG)
+![Screenshot](01 - Client creation.PNG)
