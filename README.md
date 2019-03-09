@@ -79,13 +79,34 @@ searchguard:
           type: openid
           challenge: false
           config:
-            #This this the claim used as the username in IdentityServer4
+            #This is the claim used as the username in IdentityServer4
             subject_key: preferred_username
-            #This this the claim used as the role of the user
+            #This is the claim used as the role of the user
             roles_key: role
             openid_connect_url: http://<IdentityServer4 server address>/.well-known/openid-configuration
         authentication_backend:
           type: noop
 ```
 
+## Give permissions to user
+Of the advantages of the Search Gaurd is that you can specify permissions to users. For instance, we want a specific user named *A* to read/write the *humanresource* index. For this, we create two roles name `kibanauser` and `hr` in the User configuration section of this tutorial and created a user with the same roles.
 
+### sg_roles.yml
+Add the following lines to the configuration:
+```
+sg_human_resources:
+  cluster:
+    - CLUSTER_COMPOSITE_OPS
+  indices:
+    'humanresources':
+      '*':
+        - INDICES_ALL
+```
+
+### sg_roles_mapping.yml
+Add the following lines to the configuration:
+```
+sg_human_resources:
+  backendroles:
+    - hr
+```
