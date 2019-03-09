@@ -110,3 +110,23 @@ sg_human_resources:
   backendroles:
     - hr
 ```
+
+## Connect Serilog with Elastic
+After connecting the IdentityServer4 with Elastic, it is time to make the connection between [Serlilog](https://github.com/serilog/serilog-sinks-elasticsearch) and the Elastic. To do so, the `basic_internal_auth_domain` is set in the `sg_config.yml`. Such basic authentication allows the built-in Search Gaurd users to connect to the Elastic by providing username and password. To do so, add the following lines of configuration to the `ConfigureServices` method in your .Net Core project:
+
+```
+Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("https://localhost:9200"))
+                {
+                    AutoRegisterTemplate = true,
+                    ModifyConnectionSettings =
+                        x => x.BasicAuthentication("admin", "admin").GlobalHeaders(new NameValueCollection
+                        {
+                            {"Authorization", "Bearer YWRtaW46YWRtaW4="} //The hash code for "admin" as password
+                        }),
+                    IndexFormat = "elasticsearchserilog-{0:yyyy.MM.dd}", //The index format for your application
+                })
+                .CreateLogger();
+```
