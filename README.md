@@ -25,10 +25,20 @@ In addition to the client, it is needed to add two new roles. One is required to
 ## Elastic preparation
 The Elastic, by default, does not support external login. To do so, it is neccesary to add the [Search Gaurd](https://search-guard.com/) as a plugin to Kibana and Elastic Search. To do so, please follow the instructions given [here](https://docs.search-guard.com/latest/installation-windows).
 
-> Warning: In the [demo certificates section](https://docs.search-guard.com/latest/installation-windows#download-and-install-the-search-guard-demo-certificates), the likes might be corrupted. If this happened, please download the certificates from [here](certificates.zip).
+> Warning: In the [demo certificates section](https://docs.search-guard.com/latest/installation-windows#download-and-install-the-search-guard-demo-certificates), the files might be corrupted. If this happened, please download the certificates from [here](certificates.zip).
 
 ## Add IdentityServer4 to Elastic
 In order to have the the IdentityServer4 on Elastic, it is neccesary to make some configuration as below:
+
+### kibana.yml
+```
+searchguard.auth.type: "openid"
+searchguard.openid.connect_url: "http://<IdentityServer4 server address>/.well-known/openid-configuration"
+searchguard.openid.client_id: "elastic-mvc" #The ClientId added in the IdentityServer4
+searchguard.openid.client_secret: "elk-secret" #The ClientSercert added in the IdentityServer4
+searchguard.openid.scope: "profile openid roles" #The Scopes added in the IdentityServer4
+searchguard.openid.header: "Authorization"
+```
 
 
 
