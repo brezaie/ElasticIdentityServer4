@@ -31,15 +31,61 @@ The Elastic, by default, does not support external login. To do so, it is necces
 In order to have the the IdentityServer4 on Elastic, it is neccesary to make some configuration as below:
 
 ### kibana.yml
+Add the following lines to theconfiguration of the Kibana
+
 ```
 searchguard.auth.type: "openid"
 searchguard.openid.connect_url: "http://<IdentityServer4 server address>/.well-known/openid-configuration"
-searchguard.openid.client_id: "elastic-mvc" #The ClientId added in the IdentityServer4
-searchguard.openid.client_secret: "elk-secret" #The ClientSercert added in the IdentityServer4
-searchguard.openid.scope: "profile openid roles" #The Scopes added in the IdentityServer4
+
+#The ClientId added in the IdentityServer4
+searchguard.openid.client_id: "elastic-mvc" 
+
+#The ClientSercert added in the IdentityServer4
+searchguard.openid.client_secret: "elk-secret" 
+
+#The Scopes added in the IdentityServer4
+searchguard.openid.scope: "profile openid roles" 
 searchguard.openid.header: "Authorization"
 ```
 
+### sg_config.yml
+Have the following configuration in the sg_config.yml, instead of the default configuration:
 
+```
+searchguard:
+  dynamic:
+    http:
+      anonymous_auth_enabled: false
+      xff:
+        enabled: false
+        internalProxies: '192\.168\.0\.10|192\.168\.0\.11' # regex pattern
+        remoteIpHeader:  'x-forwarded-for'
+        proxiesHeader:   'x-forwarded-by'
+    authc:
+      #The 'basic_internal_auth_domain' is used for external plugins and libraries such as [Metricbeat](https://www.elastic.co/products/beats/metricbeat) or [Serilog](https://github.com/serilog/serilog-sinks-elasticsearch)
+      basic_internal_auth_domain:
+        enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: internal
+      #Here is the configuration for IdentityServer4
+      openid_auth_domain:
+        enabled: true
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false
+          config:
+            #This this the claim used as the username in IdentityServer4
+            subject_key: preferred_username
+            #This this the claim used as the role of the user
+            roles_key: role
+            openid_connect_url: http://<IdentityServer4 server address>/.well-known/openid-configuration
+        authentication_backend:
+          type: noop
+```
 
 
