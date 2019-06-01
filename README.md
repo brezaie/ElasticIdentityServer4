@@ -130,3 +130,18 @@ Log.Logger = new LoggerConfiguration()
                 })
                 .CreateLogger();
 ```
+
+## Add Metricbeat to Elastic via SearchGuard
+Add the following lines to the configuration file of the metricbeat named `metricbeat.yml`:
+```
+setup.kibana:
+  host: "http://http://<Kibana server address>:<Kibana port>"
+
+output.elasticsearch:
+  hosts: ["https://<Elastic Search server address>:<Elastic Search port>"]
+  ssl.verification_mode: none
+  protocol: "https"
+  username: "admin"
+  password: "admin"
+  
+```
